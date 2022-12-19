@@ -13,6 +13,7 @@ services:
         - "traefik.http.routers.my-app-secure.rule=Host(`whoami.docker.test`)"
         - "traefik.http.routers.my-app-secure.entrypoints=websecure"
         - "traefik.http.routers.my-app-secure.tls.certresolver=letsencrypt"
+        - "traefik.http.services.my-app-secure.loadbalancer.server.port=8080"
 
         networks:
         - traefik
