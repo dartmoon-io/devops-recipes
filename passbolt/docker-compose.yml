@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  mariadb:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD="true"
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - "/var/docker/passbolt/mysql:/var/lib/mysql"
+
+  passbolt:
+    image: passbolt/passbolt:latest-ce
+    depends_on:
+      - mariadb
+    environment:
+      - APP_FULL_BASE_URL=${APP_FULL_BASE_URL}
+      - DATASOURCES_DEFAULT_HOST="mariadb"
+      - DATASOURCES_DEFAULT_USERNAME=${DATABASE_USER}
+      - DATASOURCES_DEFAULT_PASSWORD=${DATABASE_PASSWORD}
+      - DATASOURCES_DEFAULT_DATABASE=${DATABASE_NAME}
+    volumes:
+      - "/var/docker/passbolt/gpg:/etc/passbolt/gpg"
+      - "/var/docker/passbolt/jwt:/etc/passbolt/jwt"
+    # command: ["/usr/bin/wait-for.sh", "-t", "0", "mariadb:3306", "--", "/docker-entrypoint.sh"]
+    labels:
+      - "traefik.http.routers.passbolt.rule=Host(`passbolt.yourdomain.ext`)"
+      - "traefik.http.routers.passbolt.entrypoints=web"
+      - "traefik.http.routers.passbolt.middlewares=https-redirect"
+      - "traefik.http.routers.passbolt-secure.rule=Host(`passbolt.yourdomain.ext`)"
+      - "traefik.http.routers.passbolt-secure.entrypoints=websecure"
+      - "traefik.http.routers.passbolt-secure.tls.certresolver=letsencrypt"
+      # - "traefik.http.services.passbolt-secure.loadbalancer.server.port=4443"
+    restart: always
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
