@@ -10,22 +10,34 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
     volumes:
-      - "/var/docker/passbolt/mysql:/var/lib/mysql"
+      - "mysql:/var/lib/mysql"
+    networks:
+      - passbolt
 
   passbolt:
-    image: passbolt/passbolt:latest-ce
+    image: passbolt/passbolt:3.8.3-1-ce
     depends_on:
       - mariadb
     environment:
       - APP_FULL_BASE_URL=${APP_FULL_BASE_URL}
-      - DATASOURCES_DEFAULT_HOST="mariadb"
+      - DATASOURCES_DEFAULT_HOST=mariadb
       - DATASOURCES_DEFAULT_USERNAME=${DATABASE_USER}
       - DATASOURCES_DEFAULT_PASSWORD=${DATABASE_PASSWORD}
       - DATASOURCES_DEFAULT_DATABASE=${DATABASE_NAME}
+      - EMAIL_DEFAULT_FROM=${EMAIL_DEFAULT_FROM}
+      - EMAIL_DEFAULT_FROM_NAME=${EMAIL_DEFAULT_FROM_NAME}
+      - EMAIL_TRANSPORT_DEFAULT_HOST=${EMAIL_TRANSPORT_DEFAULT_HOST}
+      - EMAIL_TRANSPORT_DEFAULT_PORT=${EMAIL_TRANSPORT_DEFAULT_PORT}
+      - EMAIL_TRANSPORT_DEFAULT_TLS=${EMAIL_TRANSPORT_DEFAULT_TLS}
+      - EMAIL_TRANSPORT_DEFAULT_USERNAME=${EMAIL_TRANSPORT_DEFAULT_USERNAME}
+      - EMAIL_TRANSPORT_DEFAULT_PASSWORD=${EMAIL_TRANSPORT_DEFAULT_PASSWORD}
+      - SECURITY_SALT=${SECURITY_SALT}
+      - PASSBOLT_KEY_NAME=${PASSBOLT_KEY_NAME}
+      - PASSBOLT_KEY_EMAIL=${PASSBOLT_KEY_EMAIL}
     volumes:
-      - "/var/docker/passbolt/gpg:/etc/passbolt/gpg"
-      - "/var/docker/passbolt/jwt:/etc/passbolt/jwt"
-    # command: ["/usr/bin/wait-for.sh", "-t", "0", "mariadb:3306", "--", "/docker-entrypoint.sh"]
+      - "gpg:/etc/passbolt/gpg"
+      - "jwt:/etc/passbolt/jwt"
+    command: ["/usr/bin/wait-for.sh", "-t", "0", "mariadb:3306", "--", "/docker-entrypoint.sh"]
     labels:
       - "traefik.http.routers.passbolt.rule=Host(`passbolt.yourdomain.ext`)"
       - "traefik.http.routers.passbolt.entrypoints=web"
@@ -36,8 +48,15 @@ services:
       # - "traefik.http.services.passbolt-secure.loadbalancer.server.port=4443"
     restart: always
     networks:
+      - passbolt
       - traefik
 
+volumes:
+  mysql:
+  gpg:
+  jwt:
+
 networks:
+  passbolt:
   traefik:
     external: true
