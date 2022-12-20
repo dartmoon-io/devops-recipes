@@ -7,10 +7,12 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --providers.docker
+      - --providers.docker.network=traefik
       - --api.dashboard=true
       - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
       - --certificatesresolvers.letsencrypt.acme.email=admin@yourdomain.ext
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true 
       - --api.insecure
     ports:
       - 80:80
@@ -20,12 +22,12 @@ services:
       - "/var/docker/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
-        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-        - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
-    #   - "traefik.http.routers.dashboard.rule=Host(`traefik.s1-rn.yourdomain.ext`)"
-    #   - "traefik.http.routers.dashboard.service=api@internal"
-    #   - "traefik.http.routers.dashboard.entrypoints=websecure"
-    #   - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+      # - "traefik.http.routers.dashboard.rule=Host(`traefik.s1-rn.yourdomain.ext`)"
+      # - "traefik.http.routers.dashboard.service=api@internal"
+      # - "traefik.http.routers.dashboard.entrypoints=websecure"
+      # - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
     restart: always
     networks:
       - traefik

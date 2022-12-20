@@ -45,12 +45,13 @@ services:
       - "traefik.http.routers.passbolt-secure.rule=Host(`passbolt.yourdomain.ext`)"
       - "traefik.http.routers.passbolt-secure.entrypoints=websecure"
       - "traefik.http.routers.passbolt-secure.tls.certresolver=letsencrypt"
-      # - "traefik.http.services.passbolt-secure.loadbalancer.server.port=4443"
+      - "traefik.http.services.passbolt-secure.loadbalancer.server.port=443"
+      - "traefik.http.services.passbolt-secure.loadbalancer.server.scheme=https"
     restart: always
     networks:
-      - passbolt
       - traefik
-
+      - passbolt
+      
 volumes:
   mysql:
   gpg:
