@@ -19,7 +19,7 @@ services:
     depends_on:
       - mariadb
     environment:
-      - APP_FULL_BASE_URL=${APP_FULL_BASE_URL}
+      - APP_FULL_BASE_URL=https://${TRAEFIK_HOST}
       - DATASOURCES_DEFAULT_HOST=mariadb
       - DATASOURCES_DEFAULT_USERNAME=${DATABASE_USER}
       - DATASOURCES_DEFAULT_PASSWORD=${DATABASE_PASSWORD}
@@ -39,10 +39,10 @@ services:
       - "jwt:/etc/passbolt/jwt"
     command: ["/usr/bin/wait-for.sh", "-t", "0", "mariadb:3306", "--", "/docker-entrypoint.sh"]
     labels:
-      - "traefik.http.routers.passbolt.rule=Host(`passbolt.yourdomain.ext`)"
+      - "traefik.http.routers.passbolt.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.passbolt.entrypoints=web"
       - "traefik.http.routers.passbolt.middlewares=https-redirect"
-      - "traefik.http.routers.passbolt-secure.rule=Host(`passbolt.yourdomain.ext`)"
+      - "traefik.http.routers.passbolt-secure.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.passbolt-secure.entrypoints=websecure"
       - "traefik.http.routers.passbolt-secure.tls.certresolver=letsencrypt"
       - "traefik.http.services.passbolt-secure.loadbalancer.server.port=443"
