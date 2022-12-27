@@ -15,6 +15,7 @@ services:
     volumes:
       - "/var/docker/drone:/data"
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.drone.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.drone.entrypoints=web"
       - "traefik.http.routers.drone.middlewares=https-redirect"

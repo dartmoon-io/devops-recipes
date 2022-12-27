@@ -39,6 +39,7 @@ services:
       - "jwt:/etc/passbolt/jwt"
     command: ["/usr/bin/wait-for.sh", "-t", "0", "mariadb:3306", "--", "/docker-entrypoint.sh"]
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.passbolt.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.passbolt.entrypoints=web"
       - "traefik.http.routers.passbolt.middlewares=https-redirect"

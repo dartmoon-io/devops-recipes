@@ -12,7 +12,8 @@ services:
       - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
       - --certificatesresolvers.letsencrypt.acme.email=admin@yourdomain.ext
       - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      - --serversTransport.insecureSkipVerify=true 
+      - --serversTransport.insecureSkipVerify=true
+      - --providers.docker.exposedByDefault=false
       - --api.insecure
     ports:
       - 80:80
@@ -22,6 +23,7 @@ services:
       - "/var/docker/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
+      - "traefik.enable=true"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
       # - "traefik.http.routers.dashboard.rule=Host(`traefik.s1-rn.yourdomain.ext`)"
