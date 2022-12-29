@@ -13,7 +13,7 @@ services:
       - DRONE_USER_FILTER=${DRONE_USER_FILTER}
       - DRONE_TLS_AUTOCERT=false
     volumes:
-      - "/var/docker/drone:/data"
+      - "/var/docker/drone/volumes/data:/data"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.drone.rule=Host(`${TRAEFIK_HOST}`)"
