@@ -15,7 +15,7 @@ services:
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - DOMAIN=https://${TRAEFIK_HOST}
     volumes:
-      - "data:/data"
+      - "/var/docker/vaultwarden/volumes/data:/data"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.vaultwarden.rule=Host(`${TRAEFIK_HOST}`)"
@@ -29,9 +29,6 @@ services:
     restart: always
     networks:
       - traefik
-      
-volumes:
-  data:
 
 networks:
   passbolt:

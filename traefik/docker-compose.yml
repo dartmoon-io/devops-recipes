@@ -20,7 +20,7 @@ services:
       - 443:443
       - 8080:8080
     volumes:
-      - "/var/docker/traefik/letsencrypt:/letsencrypt"
+      - "/var/docker/traefik/volumes/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - "traefik.enable=true"
