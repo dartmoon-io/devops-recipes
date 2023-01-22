@@ -1,0 +1,7 @@
+.git/
+etc/
+storage/
+node_modules/
+.drone.yml
+.env
+auth.json

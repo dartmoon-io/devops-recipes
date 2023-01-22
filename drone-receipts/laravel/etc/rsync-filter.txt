@@ -1,0 +1,6 @@
+P storage/
+P .env
+P php_errorlog
+
+P public/.htaccess
+P public/.well-known/
