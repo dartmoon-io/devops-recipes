@@ -1,0 +1,13 @@
+{
+    "CORSRules": [{
+        "AllowedOrigins": ["https://brain.yourdomain.ext"],
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["PUT", "POST"],
+        "ExposeHeaders": []
+    }, {
+        "AllowedOrigins": ["*"],
+        "AllowedHeaders": [],
+        "AllowedMethods": ["GET"],
+        "ExposeHeaders": []
+    }]
+}
