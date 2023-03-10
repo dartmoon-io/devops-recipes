@@ -1,0 +1,14 @@
+.git/
+etc/
+.drone.yml
+.env
+docker-compose.yml
+Dockerfile
+auth.json
+
+web/.htaccess
+web/app/debug.log
+web/app/uploads/
+web/app/languages/plugins/
+web/app/languages/themes/
+web/app/languages/wpml/

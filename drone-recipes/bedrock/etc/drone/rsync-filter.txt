@@ -1,0 +1,11 @@
+P .env
+
+P web/.htaccess
+P web/.well-known/
+P web/php_errorlog
+
+P web/app/debug.log
+P web/app/uploads/
+P web/app/languages/plugins/
+P web/app/languages/themes/
+P web/app/languages/wpml/
