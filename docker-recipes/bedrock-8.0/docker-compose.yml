@@ -1,0 +1,55 @@
+# For more information: https://laravel.com/docs/sail
+version: '3'
+services:
+    bedrock:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+            args:
+                UID: '${DOCKER_UID:-1000}'
+                GID: '${DOCKER_GID:-1000}'
+        image: dartmoon/bedrock-8.0
+        ports:
+            - 80:80
+        volumes:
+            - './:/var/www/html'
+        networks:
+            - bedrock
+        depends_on:
+            - mariadb
+            - mailhog
+
+    mariadb:
+        image: 'mariadb:10'
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: ${DB_NAME:-bedrock}
+            MYSQL_USER: ${DB_USER:-bedrock}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-bedrock}
+        ports:
+            - 3306:3306
+        volumes:
+            - 'bedrock-mariadb:/var/lib/mysql'
+        networks:
+            - bedrock
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-proot"]
+            retries: 3
+            timeout: 5s
+            
+    mailhog:
+        image: 'mailhog/mailhog:latest'
+        ports:
+            - 1025:1025
+            - 8025:8025
+        networks:
+            - bedrock
+
+networks:
+    bedrock:
+        driver: bridge
+
+volumes:
+    bedrock-mariadb:
+        driver: local
