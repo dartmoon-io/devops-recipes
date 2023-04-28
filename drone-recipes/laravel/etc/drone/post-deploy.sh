@@ -15,6 +15,7 @@ php81 artisan cache:clear
 php81 artisan config:clear
 php81 artisan view:clear
 
-# if [ -f .env ] ; then
-#     php81 artisan migrate --force
-# fi
+if [ -f .env ] ; then
+    php81 artisan migrate --force
+    php81 artisan db:seed --force
+fi
