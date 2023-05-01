@@ -1,0 +1,39 @@
+version: "3"
+services:
+
+  portainer-agent:
+    image: portainer/agent:2.16.2
+    container_name: portainer-edge-agent
+    environment:
+      - EDGE=${EDGE}
+      - EDGE_ID=${EDGE_ID}
+      - EDGE_KEY=${EDGE_KEY}
+      - EDGE_INSECURE_POLL=${EDGE_INSECURE_POLL}
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/volumes:/var/lib/docker/volumes"
+      - "/:/host"
+      - "/var/docker/portainer-agent/volumes/data:/data"
+    ports:
+      - 8000:8000
+      - 9443:9443
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.outline.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.outline.entrypoints=web"
+      - "traefik.http.routers.outline.middlewares=https-redirect"
+      - "traefik.http.routers.outline-secure.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.outline-secure.entrypoints=websecure"
+      - "traefik.http.routers.outline-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.outline-secure.loadbalancer.server.port=9443"
+      - "traefik.http.services.outline-secure.loadbalancer.server.scheme=https"
+    restart: always
+    networks:
+      - traefik
+    # Uncomment these lines if this a local edge agent
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+
+networks:
+  traefik:
+    external: true

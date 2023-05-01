@@ -1,0 +1,28 @@
+version: "3"
+services:
+
+  portainer:
+    image: portainer/portainer-ee:2.16.2
+    container_name: portainer
+    volumes:
+      - "/var/docker/portainer/volumes/data:/data"
+    ports:
+      - 8000:8000
+      - 9443:9443
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.outline.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.outline.entrypoints=web"
+      - "traefik.http.routers.outline.middlewares=https-redirect"
+      - "traefik.http.routers.outline-secure.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.outline-secure.entrypoints=websecure"
+      - "traefik.http.routers.outline-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.outline-secure.loadbalancer.server.port=9443"
+      - "traefik.http.services.outline-secure.loadbalancer.server.scheme=https"
+    restart: always
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
