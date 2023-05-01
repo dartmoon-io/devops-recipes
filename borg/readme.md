@@ -20,5 +20,3 @@ Configure the bucket [scaleway](https://www.scaleway.com/en/docs/storage/object/
 ## Resources
 - [https://github.com/luispabon/borg-s3-home-backup/blob/master/borg-backup.sh](https://github.com/luispabon/borg-s3-home-backup/blob/master/borg-backup.sh)
 - [https://github.com/DoTheEvo/selfhosted-apps-docker/tree/master/borg_backup](https://github.com/DoTheEvo/selfhosted-apps-docker/tree/master/borg_backup)
-
-https://backup-s1-rn.s3.fr-par.scw.cloud
