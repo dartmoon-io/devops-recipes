@@ -1,5 +1,66 @@
 kind: pipeline
 type: docker
+name: test
+
+trigger:
+  event:
+    - pull_request
+
+steps:
+  - name: restore-cache
+    image: drillster/drone-volume-cache
+    environment:
+      CACHE_TAG: 'test'
+    settings:
+      restore: true
+      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
+      mount:
+        - ./vendor
+    volumes:
+      - name: cache
+        path: /cache
+
+  - name: composer
+    image: composer:2
+    commands:
+      - composer install --ignore-platform-reqs --no-scripts --no-interaction
+      - composer dump-autoload --ignore-platform-reqs --no-scripts --no-interaction
+    depends_on:
+      - restore-cache
+
+  - name: pest
+    image: php:8.2-alpine
+    commands:
+      - cp .env.example .env
+      - php artisan key:generate
+      - ./vendor/bin/pest
+
+    depends_on:
+      - composer
+
+  - name: rebuild-cache
+    image: drillster/drone-volume-cache
+    environment:
+      CACHE_TAG: 'test'
+    settings:
+      rebuild: true
+      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
+      mount:
+        - ./vendor
+    volumes:
+      - name: cache
+        path: /cache
+    depends_on:
+      - composer
+
+volumes:
+  - name: cache
+    host:
+      path: /tmp/drone/cache
+
+---
+kind: pipeline
+type: docker
 name: promote-to-staging
 
 trigger:
@@ -138,68 +199,8 @@ steps:
       - name: cache
         path: /cache
     depends_on:
-      - deploy
-
-volumes:
-  - name: cache
-    host:
-      path: /tmp/drone/cache
-
----
-kind: pipeline
-type: docker
-name: test
-
-trigger:
-  event:
-    - pull_request
-
-steps:
-  - name: restore-cache
-    image: drillster/drone-volume-cache
-    environment:
-      CACHE_TAG: 'test'
-    settings:
-      restore: true
-      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
-      mount:
-        - ./vendor
-    volumes:
-      - name: cache
-        path: /cache
-
-  - name: composer
-    image: composer:2
-    commands:
-      - composer install --ignore-platform-reqs --no-scripts --no-interaction
-      - composer dump-autoload --ignore-platform-reqs --no-scripts --no-interaction
-    depends_on:
-      - restore-cache
-
-  - name: pest
-    image: php:8.2-alpine
-    commands:
-      - cp .env.example .env
-      - php artisan key:generate
-      - ./vendor/bin/pest
-
-    depends_on:
       - composer
-
-  - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    environment:
-      CACHE_TAG: 'test'
-    settings:
-      rebuild: true
-      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
-      mount:
-        - ./vendor
-    volumes:
-      - name: cache
-        path: /cache
-    depends_on:
-      - pest
+      - yarn
 
 volumes:
   - name: cache
@@ -342,68 +343,8 @@ steps:
       - name: cache
         path: /cache
     depends_on:
-      - deploy
-
-volumes:
-  - name: cache
-    host:
-      path: /tmp/drone/cache
-
----
-kind: pipeline
-type: docker
-name: test
-
-trigger:
-  event:
-    - pull_request
-
-steps:
-  - name: restore-cache
-    image: drillster/drone-volume-cache
-    environment:
-      CACHE_TAG: 'test'
-    settings:
-      restore: true
-      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
-      mount:
-        - ./vendor
-    volumes:
-      - name: cache
-        path: /cache
-
-  - name: composer
-    image: composer:2
-    commands:
-      - composer install --ignore-platform-reqs --no-scripts --no-interaction
-      - composer dump-autoload --ignore-platform-reqs --no-scripts --no-interaction
-    depends_on:
-      - restore-cache
-
-  - name: pest
-    image: php:8.2-alpine
-    commands:
-      - cp .env.example .env
-      - php artisan key:generate
-      - ./vendor/bin/pest
-
-    depends_on:
       - composer
-
-  - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    environment:
-      CACHE_TAG: 'test'
-    settings:
-      rebuild: true
-      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
-      mount:
-        - ./vendor
-    volumes:
-      - name: cache
-        path: /cache
-    depends_on:
-      - pest
+      - yarn
 
 volumes:
   - name: cache

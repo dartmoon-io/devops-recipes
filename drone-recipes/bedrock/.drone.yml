@@ -64,7 +64,21 @@ steps:
     depends_on:
       - restore-cache
 
-  - name: deploy-production
+  - name: yarn
+    image: node:gallium-bullseye-slim
+    commands:
+      - yarn --cwd web/app/themes/sage --frozen-lockfile --non-interactive
+    depends_on:
+      - restore-cache
+
+  - name: build-assets
+    image: node:gallium-bullseye-slim
+    commands:
+      - yarn --cwd web/app/themes/sage build
+    depends_on:
+      - yarn
+
+  - name: deploy
     image: alpine:3
     environment:
       SSH_PRIVATE_KEY:
@@ -104,6 +118,8 @@ steps:
 
     depends_on:
       - composer
+      - yarn
+      - build-assets
 
   - name: rebuild-cache
     image: drillster/drone-volume-cache
@@ -118,7 +134,8 @@ steps:
       - name: cache
         path: /cache
     depends_on:
-      - deploy-production
+      - composer
+      - yarn
 
 volumes:
   - name: cache
