@@ -43,12 +43,14 @@ steps:
   - name: restore-cache
     image: drillster/drone-volume-cache
     environment:
-      CACHE_TAG: 'deploy-to-production'
+      CACHE_TAG: 'production'
     settings:
       restore: true
       cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
       mount:
         - ./vendor
+        - ./web/app/themes/sage/vendor
+        - ./web/app/themes/sage/node_modules
     volumes:
       - name: cache
         path: /cache
@@ -61,6 +63,7 @@ steps:
     commands:
       - composer config --global http-basic.satispress.yourdomain.ext $SATISPRESS_TOKEN satispress
       - composer install --no-dev --prefer-dist --ignore-platform-reqs --no-scripts --no-interaction
+      - composer install --no-dev --prefer-dist --ignore-platform-reqs --no-scripts --no-interaction --working-dir=web/app/themes/sage
     depends_on:
       - restore-cache
 
@@ -92,7 +95,7 @@ steps:
       SSH_PORT:
         from_secret: SSH_PORT
 
-      DEPLOY_PATH: www/ecoagn.dartmoon.dev/
+      DEPLOY_PATH: "www/noiargonauti.it"
     commands:
       # Install dependencies
       - apk update && apk add rsync && apk add openssh-client
@@ -124,7 +127,7 @@ steps:
   - name: rebuild-cache
     image: drillster/drone-volume-cache
     environment:
-      CACHE_TAG: 'deploy-to-production'
+      CACHE_TAG: 'production'
     settings:
       rebuild: true
       cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]

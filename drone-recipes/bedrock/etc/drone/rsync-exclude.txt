@@ -12,3 +12,5 @@ web/app/uploads/
 web/app/languages/plugins/
 web/app/languages/themes/
 web/app/languages/wpml/
+
+web/app/themes/sage/node_modules/
