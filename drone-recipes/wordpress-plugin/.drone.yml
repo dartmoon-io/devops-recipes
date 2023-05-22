@@ -42,7 +42,7 @@ steps:
   - name: restore-cache
     image: drillster/drone-volume-cache
     environment:
-      CACHE_TAG: 'deploy-to-production'
+      CACHE_TAG: 'staging'
     settings:
       restore: true
       cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
@@ -78,15 +78,15 @@ steps:
     image: alpine:3
     environment:
       SSH_PRIVATE_KEY:
-        from_secret: SSH_PRIVATE_KEY
+        from_secret: STAGING_SSH_PRIVATE_KEY
       SSH_PASSPHRASE:
-        from_secret: SSH_PASSPHRASE
+        from_secret: STAGING_SSH_PASSPHRASE
       SSH_HOST:
-        from_secret: SSH_HOST
+        from_secret: STAGING_SSH_HOST
       SSH_USER:
-        from_secret: SSH_USER
+        from_secret: STAGING_SSH_USER
       SSH_PORT:
-        from_secret: SSH_PORT
+        from_secret: STAGING_SSH_PORT
 
       DEPLOY_PATH: www/aryel-wp.dartmoon.dev/public_html/wp-content/plugins
       PLUGIN_NAME: woocommerce-aryel
@@ -121,7 +121,7 @@ steps:
   - name: rebuild-cache
     image: drillster/drone-volume-cache
     environment:
-      CACHE_TAG: 'deploy-to-production'
+      CACHE_TAG: 'staging'
     settings:
       rebuild: true
       cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
