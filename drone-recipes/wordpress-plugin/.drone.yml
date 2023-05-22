@@ -1,0 +1,140 @@
+kind: pipeline
+type: docker
+name: promote-to-staging
+
+trigger:
+  branch:
+    - develop
+  event:
+    - push
+
+steps:
+  - name: promote
+    image: alpine:3
+    environment:
+      DRONE_TOKEN:
+        from_secret: DRONE_TOKEN
+      DRONE_SERVER:
+        from_secret: DRONE_SERVER
+    commands:
+      # Install dependencies
+      - apk update && apk add curl
+      - curl -L https://github.com/harness/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
+      - mv drone /usr/local/bin
+      - chmod +x /usr/local/bin
+
+      # Promote
+      - drone build promote $DRONE_REPO $DRONE_BUILD_NUMBER staging
+
+---
+kind: pipeline
+type: docker
+name: deploy-to-staging
+
+trigger:
+  event:
+    - promote
+    - rollback
+  target:
+    - staging
+
+steps:
+  - name: restore-cache
+    image: drillster/drone-volume-cache
+    environment:
+      CACHE_TAG: 'deploy-to-production'
+    settings:
+      restore: true
+      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
+      mount:
+        - ./vendor
+        - ./node_modules
+    volumes:
+      - name: cache
+        path: /cache
+
+  - name: composer
+    image: composer:2
+    commands:
+      - composer install --no-dev --prefer-dist --ignore-platform-reqs --no-scripts --no-interaction
+    depends_on:
+      - restore-cache
+
+  - name: yarn
+    image: node:gallium-bullseye-slim
+    commands:
+      - yarn --frozen-lockfile --non-interactive
+    depends_on:
+      - restore-cache
+
+  - name: build-assets
+    image: node:gallium-bullseye-slim
+    commands:
+      - yarn prod
+    depends_on:
+      - yarn
+
+  - name: deploy
+    image: alpine:3
+    environment:
+      SSH_PRIVATE_KEY:
+        from_secret: SSH_PRIVATE_KEY
+      SSH_PASSPHRASE:
+        from_secret: SSH_PASSPHRASE
+      SSH_HOST:
+        from_secret: SSH_HOST
+      SSH_USER:
+        from_secret: SSH_USER
+      SSH_PORT:
+        from_secret: SSH_PORT
+
+      DEPLOY_PATH: www/aryel-wp.dartmoon.dev/public_html/wp-content/plugins
+      PLUGIN_NAME: woocommerce-aryel
+    commands:
+      # Install dependencies
+      - apk update && apk add rsync && apk add openssh-client
+
+      # Prepare SSH key
+      - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+      - echo -e '#!/usr/bin/env sh\necho "$SSH_PASSPHRASE"' > ~/.ssh/print_ssh_passphrase
+      - chmod 700 ~/.ssh/print_ssh_passphrase && chmod +x ~/.ssh/print_ssh_passphrase
+      - eval $(ssh-agent -s)
+      - echo "$SSH_PRIVATE_KEY" | DISPLAY=":0.0" SSH_ASKPASS=~/.ssh/print_ssh_passphrase setsid ssh-add -
+
+      # Prepare SSH remote host
+      - echo -e "Host remote\n\tHostName $SSH_HOST\n\tUser $SSH_USER\n\tPort $SSH_PORT\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n" > ~/.ssh/config
+
+      # Pre deploy script
+      - ssh remote "export DEPLOY_PATH=$DEPLOY_PATH PLUGIN_NAME=$PLUGIN_NAME && bash -s" < ./etc/drone/pre-deploy.sh
+
+      # Sync folders
+      - rsync -rzvhWP --force --delete --delete-excluded --exclude-from './etc/drone/rsync-exclude.txt' --filter "merge etc/drone/rsync-filter.txt" . remote:$DEPLOY_PATH/$PLUGIN_NAME
+
+      # Post deploy script
+      - ssh remote "export DEPLOY_PATH=$DEPLOY_PATH PLUGIN_NAME=$PLUGIN_NAME && bash -s" < ./etc/drone/post-deploy.sh
+
+    depends_on:
+      - composer
+      - yarn
+      - build-assets
+
+  - name: rebuild-cache
+    image: drillster/drone-volume-cache
+    environment:
+      CACHE_TAG: 'deploy-to-production'
+    settings:
+      rebuild: true
+      cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
+      mount:
+        - ./vendor
+    volumes:
+      - name: cache
+        path: /cache
+    depends_on:
+      - composer
+      - yarn
+
+volumes:
+  - name: cache
+    host:
+      path: /tmp/drone/cache

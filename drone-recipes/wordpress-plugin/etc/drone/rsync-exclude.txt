@@ -1,0 +1,4 @@
+.git/
+etc/
+.drone.yml
+node_modules/
