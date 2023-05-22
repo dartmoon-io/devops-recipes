@@ -133,6 +133,8 @@ steps:
       cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
       mount:
         - ./vendor
+        - ./web/app/themes/sage/vendor
+        - ./web/app/themes/sage/node_modules
     volumes:
       - name: cache
         path: /cache

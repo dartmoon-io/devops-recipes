@@ -127,6 +127,7 @@ steps:
       cache_key: [DRONE_REPO_OWNER, DRONE_REPO_NAME, CACHE_TAG]
       mount:
         - ./vendor
+        - ./node_modules
     volumes:
       - name: cache
         path: /cache
