@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   valutwarden:
-    image: vaultwarden/server:1.27.0
+    image: vaultwarden/server:1.28.1
     environment:
       - SIGNUPS_ALLOWED=false
       - ADMIN_TOKEN=${ADMIN_TOKEN}
