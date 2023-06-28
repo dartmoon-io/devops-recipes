@@ -2,7 +2,7 @@ version: "3"
 services:
 
   outline:
-    image: outlinewiki/outline:0.68.1
+    image: outlinewiki/outline:0.69.2
     environment:
       - NODE_ENV=production
       - SECRET_KEY=${SECRET_KEY}
