@@ -95,7 +95,7 @@ steps:
       SSH_PORT:
         from_secret: SSH_PORT
 
-      DEPLOY_PATH: "www/noiargonauti.it"
+      DEPLOY_PATH: "{PATH}"
     commands:
       # Install dependencies
       - apk update && apk add rsync && apk add openssh-client

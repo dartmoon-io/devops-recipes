@@ -6,6 +6,11 @@ P web/php_errorlog
 
 P web/app/debug.log
 P web/app/uploads/
-P web/app/languages/plugins/
-P web/app/languages/themes/
 P web/app/languages/wpml/
+
++ web/app/themes/sage/node_modules/
++ web/app/themes/sage/node_modules/@fortawesome/
++ web/app/themes/sage/node_modules/@fortawesome/fontawesome-free/
++ web/app/themes/sage/node_modules/@fortawesome/fontawesome-free/webfonts/
++ web/app/themes/sage/node_modules/@fortawesome/fontawesome-free/webfonts/**
+- web/app/themes/sage/node_modules/**
