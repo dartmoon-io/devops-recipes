@@ -1,0 +1,70 @@
+version: '3.9'
+
+services:
+  mattermost:
+    image: mattermost/mattermost-enterprise-edition:7.1
+    environment:
+      - TZ=${TZ}
+      - MM_SQLSETTINGS_DRIVERNAME=postgres
+      - MM_SQLSETTINGS_DATASOURCE=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@postgres:5432/${DATABASE_NAME}?sslmode=disable&connect_timeout=10
+      - MM_BLEVESETTINGS_INDEXDIR=/mattermost/bleve-indexes
+      - MM_SERVICESETTINGS_SITEURL=https://${TRAEFIK_HOST}
+    volumes:
+      - "/var/docker/mattermost/volumes/config:/mattermost/config:rw"
+      - "/var/docker/mattermost/volumes/data:/mattermost/data:rw"
+      - "/var/docker/mattermost/volumes/logs:/mattermost/logs:rw"
+      - "/var/docker/mattermost/volumes/plugins:/mattermost/plugins:rw"
+      - "/var/docker/mattermost/volumes/client-plugins:/mattermost/client/plugins:rw"
+      - "/var/docker/mattermost/volumes/bleve-indexes:/mattermost/bleve-indexes:rw"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mattermost.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.mattermost.entrypoints=web"
+      - "traefik.http.routers.mattermost.middlewares=https-redirect"
+      - "traefik.http.routers.mattermost-secure.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.mattermost-secure.entrypoints=websecure"
+      - "traefik.http.routers.mattermost-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.mattermost-secure.loadbalancer.server.port=8065"
+      - "traefik.http.services.mattermost-secure.loadbalancer.server.scheme=http"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 200
+    read_only: false
+    tmpfs:
+      - /tmp
+    ports:
+      - 8443:8443/udp
+    networks:
+      - traefik
+      - mattermost
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      - TZ=${TZ}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - "/var/docker/mattermost/volumes/postgres:/var/lib/postgresql/data"
+    labels:
+      - "traefik.enable=false"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+    networks:
+      - mattermost
+
+networks:
+  mattermost:
+    driver: bridge
+  traefik:
+    external: true
