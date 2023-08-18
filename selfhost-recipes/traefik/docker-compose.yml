@@ -30,7 +30,7 @@ services:
       - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
       - "traefik.http.middlewares.headquarters-ipwhitelist.ipwhitelist.sourcerange=${IP_WHITELIST}"
       - "traefik.http.middlewares.headquarters-ipwhitelist.ipwhitelist.ipstrategy.depth=1"
-      # - "traefik.http.routers.dashboard.rule=Host(`traefik.s1-rn.yourdomain.ext`)"
+      # - "traefik.http.routers.dashboard.rule=Host(`traefik.yourdomain.ext`)"
       # - "traefik.http.routers.dashboard.service=api@internal"
       # - "traefik.http.routers.dashboard.entrypoints=websecure"
       # - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"

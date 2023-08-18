@@ -9,7 +9,7 @@
 BACKUP_THIS='/var/docker'
 REPOSITORY='/var/borg/repository'
 LOGFILE='/var/borg/borg.log'
-S3_BUCKET=backup-s1-rn
+S3_BUCKET=
 S3_PROFILE=default
 
 
