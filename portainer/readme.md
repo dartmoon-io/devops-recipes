@@ -7,7 +7,7 @@ docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /va
 
 Start the portainer agent container
 ```bash
-sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes -v /:/host -v /var/docker/portainer-agent/volumes/data:/data --restart always -e EDGE=1 -e EDGE_ID=[EDGE_ID] -e EDGE_KEY=[EDGE_KEY]  -e EDGE_INSECURE_POLL=1 --name portainer-edge-agent --add-host=host.docker.internal:host-gateway portainer/agent:2.16.2
+sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes -v /:/host -v /var/docker/portainer-agent/volumes/data:/data --restart always -e EDGE=1 -e EDGE_ID=[EDGE_ID] -e EDGE_KEY=[EDGE_KEY] -e EDGE_INSECURE_POLL=1 --name portainer-edge-agent --add-host=host.docker.internal:host-gateway portainer/agent:2.16.2
 ```
 
 ## Resources
