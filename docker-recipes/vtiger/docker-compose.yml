@@ -1,0 +1,55 @@
+version: '3'
+services:
+    vtiger:
+        image: dartmoon/vtiger
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                UID: '${DOCKER_UID}'
+                GID: '${DOCKER_GID}'
+        volumes:
+            - '.:/var/www/html'
+        ports:
+            - '80:80'
+        networks:
+            - vtiger
+        depends_on:
+            - mariadb
+
+    mariadb:
+        image: 'mariadb:10'
+        restart: unless-stopped
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: 'root'
+            MYSQL_DATABASE: 'vtiger'
+            MYSQL_USER: 'vtiger'
+            MYSQL_PASSWORD: 'vtiger'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        volumes:
+            - 'vtiger_mariadb:/var/lib/mysql'
+            - './etc/docker/mariadb/my.cnf:/etc/mysql/my.cnf'
+        networks:
+            - vtiger
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-pvtiger"]
+            retries: 3
+            timeout: 5s
+
+    mailhog:
+        image: 'mailhog/mailhog:latest'
+        ports:
+            - '1025:1025'
+            - '8025:8025'
+        networks:
+            - vtiger
+networks:
+    vtiger:
+        driver: bridge
+
+volumes:
+    vtiger_mariadb:
+        driver: local
