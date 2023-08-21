@@ -9,7 +9,7 @@ pip3 install awscli-plugin-endpoint
 
 Configure the bucket following your provider. We are using [Scaleway](https://www.scaleway.com/en/docs/storage/object/api-cli/object-storage-aws-cli/).
 
-1. Copy the script inside `/var/borg` and set the variable `S3_BUCKET` and `S3_PROFILE` inside the script itself.
+1. Copy the script inside `/var/borg` and set the variables `S3_BUCKET` and `S3_PROFILE` inside the script itself.
 2. Add the script to the crontab to execute at 00:00 and 12:00 (server timestamp). This will trigger the backup. If you want to backup at different times or more often simply add other lines to your crontab.
 
 To open the crontab in editing mode:

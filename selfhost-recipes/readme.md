@@ -1,4 +1,4 @@
-# Selfhost receipts
+# Selfhost recipes
 
 ## Prerequisites
 - We do not use docker volumes but we put everything inside `/var/docker/[SERVICE_NAME]/volumes/` folder to ease the backup process
@@ -31,7 +31,7 @@ docker-compose up -d
 ```
 
 ## Usage
-Inside each you will find the `docker-compose.yml` file and the `.env` file. To use them you need to feed the `docker-compose.yml` to Portainer and define each environment variable. The `.env` file is just a template for what environment variables must be defined.
+Inside each folder you will find the `docker-compose.yml` file and the `.env` file. To use them you need to feed the `docker-compose.yml` to Portainer and define each environment variable. The `.env` file is just a template for which environment variables must be defined.
 
 
 ## Resources
