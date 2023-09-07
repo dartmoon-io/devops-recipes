@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    volumes:
+      - "/var/docker/uptime-kuma/volumes/data:/app/data:rw"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime-kuma.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.uptime-kuma.entrypoints=web"
+      - "traefik.http.routers.uptime-kuma.middlewares=https-redirect"
+      - "traefik.http.routers.uptime-kuma-secure.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.uptime-kuma-secure.entrypoints=websecure"
+      - "traefik.http.routers.uptime-kuma-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.uptime-kuma-secure.loadbalancer.server.port=3001"
+      - "traefik.http.services.uptime-kuma-secure.loadbalancer.server.scheme=http"
+    restart: always
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
