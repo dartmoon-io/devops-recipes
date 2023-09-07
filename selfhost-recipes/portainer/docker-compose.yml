@@ -10,10 +10,10 @@ services:
       - 8000:8000
       - 9443:9443
     labels:
-      - "traefik.enable=false"
+      - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.portainer.entrypoints=web"
-      - "traefik.http.routers.portainer.middlewares=headquarters-ipwhitelist, https-redirect"
+      - "traefik.http.routers.portainer.middlewares=headquarters-ipwhitelist,https-redirect"
       - "traefik.http.routers.portainer-secure.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.portainer-secure.entrypoints=websecure"
       - "traefik.http.routers.portainer-secure.middlewares=headquarters-ipwhitelist"
