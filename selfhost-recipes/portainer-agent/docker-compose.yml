@@ -15,6 +15,5 @@ services:
       - "/:/host"
       - "/var/docker/portainer-agent/volumes/data:/data"
     restart: always
-    # Uncomment these lines if this a local edge agent
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
