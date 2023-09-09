@@ -1,6 +1,7 @@
 # Selfhost recipes
 
 ## Prerequisites
+- Install docker following [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
 - We do not use docker volumes but we put everything inside `/var/docker/[SERVICE_NAME]/volumes/` folder to ease the backup process
 - Use volumes only for data that can recreated from scatch (eg. cache, Let's Encrypt certificates, etc)
 - Fix ufw to work with docker ([Here](https://github.com/chaifeng/ufw-docker) a guide to do it)
