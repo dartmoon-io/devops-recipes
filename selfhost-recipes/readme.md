@@ -13,7 +13,7 @@
 3. Create the `traefik` network to prevent errors
 
 ```bash
-docker create network -d bridge traefik
+docker network create -d bridge traefik
 ```
 4. Launch portainer
 
