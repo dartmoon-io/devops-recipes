@@ -4,7 +4,22 @@
 - Install docker following [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
 - We do not use docker volumes but we put everything inside `/var/docker/[SERVICE_NAME]/volumes/` folder to ease the backup process
 - Use volumes only for data that can recreated from scatch (eg. cache, Let's Encrypt certificates, etc)
-- Fix ufw to work with docker ([Here](https://github.com/chaifeng/ufw-docker) a guide to do it)
+- Fix ufw to work with docker. Append the following lines lines to the file `/etc/ufw/after.rules`
+
+```txt
+# Put Docker behind UFW
+*filter
+:DOCKER-USER - [0:0]
+:ufw-user-input - [0:0]
+
+-A DOCKER-USER -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A DOCKER-USER -m conntrack --ctstate INVALID -j DROP
+-A DOCKER-USER -i eth0 -j ufw-user-input
+-A DOCKER-USER -i eth0 -j DROP
+COMMIT
+```
+
+and then reload ufw with `sudo ufw reload`
 
 ## Installation
 ### Install Portainer
