@@ -2,7 +2,7 @@ version: "3"
 services:
 
   outline:
-    image: outlinewiki/outline:0.69.2
+    image: outlinewiki/outline:0.74.0
     environment:
       - NODE_ENV=production
       - SECRET_KEY=${SECRET_KEY}
@@ -18,9 +18,9 @@ services:
       - AWS_S3_ACCELERATE_URL=${AWS_S3_ACCELERATE_URL}
       - AWS_S3_UPLOAD_BUCKET_URL=${AWS_S3_UPLOAD_BUCKET_URL}
       - AWS_S3_UPLOAD_BUCKET_NAME=${AWS_S3_UPLOAD_BUCKET_NAME}
-      - AWS_S3_UPLOAD_MAX_SIZE=${AWS_S3_UPLOAD_MAX_SIZE}
       - AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE}
       - AWS_S3_ACL=${AWS_S3_ACL}
+      - FILE_STORAGE_UPLOAD_MAX_SIZE=${FILE_STORAGE_UPLOAD_MAX_SIZE}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - CDN_URL=https://${TRAEFIK_HOST}
