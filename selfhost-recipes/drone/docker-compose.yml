@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   drone:
-    image: drone/drone:2.17.0
+    image: drone/drone:2.22.0
     environment:
       - DRONE_SERVER_HOST=${TRAEFIK_HOST}
       - DRONE_SERVER_PROTO=https
