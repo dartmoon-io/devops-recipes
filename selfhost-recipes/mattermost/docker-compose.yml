@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   mattermost:
-    image: mattermost/mattermost-enterprise-edition:7.10
+    image: mattermost/mattermost-enterprise-edition:9.4.1
     environment:
       - TZ=${TZ}
       - MM_SQLSETTINGS_DRIVERNAME=postgres
