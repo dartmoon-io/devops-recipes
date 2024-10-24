@@ -1,9 +1,24 @@
 # Selfhost recipes
 
+## Important
+Do not run docker or any server as root. Always create a user for each service and run the service as that user. This is a good practice to prevent any security breach.
+
+```bash
+sudo adduser ubuntu
+usermod -aG sudo ubuntu
+```
+
 ## Prerequisites
 - Install docker following [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
 - We do not use docker volumes but we put everything inside `/var/docker/[SERVICE_NAME]/volumes/` folder to ease the backup process
 - Use volumes only for data that can recreated from scatch (eg. cache, Let's Encrypt certificates, etc)
+- Use ufw to secure your server. 
+Install with
+```bash
+sudo apt-get install ufw
+sudo ufw allow ssh
+sudo ufw enable
+```
 - Fix ufw to work with docker. Append the following lines lines to the file `/etc/ufw/after.rules`
 
 ```txt
@@ -33,7 +48,7 @@ docker network create -d bridge traefik
 4. Launch portainer
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Install of portainer-agent (where stacks will live)
@@ -43,7 +58,7 @@ docker-compose up -d
 4. Launch the portainer-agent
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Usage
