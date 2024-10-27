@@ -32,6 +32,7 @@ borg create                                     \
 # DELETES ARCHIVES NOT FITTING KEEP-RULES
 
 borg prune -v --list $REPOSITORY                \
+    --keep-hourly=24                            \
     --keep-daily=7                              \
     --keep-weekly=4                             \
     --keep-monthly=6                            \
