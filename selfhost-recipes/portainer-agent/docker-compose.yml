@@ -1,6 +1,4 @@
-version: "3"
 services:
-
   portainer-agent:
     image: portainer/agent:2.16.2
     container_name: portainer-edge-agent

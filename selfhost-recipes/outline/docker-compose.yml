@@ -1,6 +1,4 @@
-version: "3"
 services:
-
   outline:
     image: outlinewiki/outline:0.78.0
     environment:

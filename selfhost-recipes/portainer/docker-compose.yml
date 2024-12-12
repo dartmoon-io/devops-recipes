@@ -1,6 +1,4 @@
-version: "3"
 services:
-
   portainer:
     image: portainer/portainer-ee:2.16.2
     container_name: portainer
