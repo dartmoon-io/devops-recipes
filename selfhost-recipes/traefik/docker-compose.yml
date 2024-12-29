@@ -26,8 +26,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
-      - "traefik.http.middlewares.headquarters-ipwhitelist.ipwhitelist.sourcerange=${HEADQUARTERS_IP_WHITELIST}"
-      - "traefik.http.middlewares.headquarters-ipwhitelist.ipwhitelist.ipstrategy.depth=1"
+      # - "traefik.http.middlewares.ipwhitelist.ipwhitelist.sourcerange=${IP_WHITELIST}"
+      # - "traefik.http.middlewares.ipwhitelist.ipwhitelist.ipstrategy.depth=1"
     restart: always
     networks:
       - traefik

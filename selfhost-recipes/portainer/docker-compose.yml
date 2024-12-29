@@ -1,6 +1,6 @@
 services:
   portainer:
-    image: portainer/portainer-ee:2.24.1
+    image: portainer/portainer-ee:2.25.1
     container_name: portainer
     volumes:
       - "/var/docker/portainer/volumes/data:/data"
@@ -12,10 +12,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.portainer.entrypoints=web"
-      - "traefik.http.routers.portainer.middlewares=headquarters-ipwhitelist,https-redirect"
+      # - "traefik.http.routers.portainer.middlewares=ipwhitelist,https-redirect"
       - "traefik.http.routers.portainer-secure.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.portainer-secure.entrypoints=websecure"
-      - "traefik.http.routers.portainer-secure.middlewares=headquarters-ipwhitelist"
+      # - "traefik.http.routers.portainer-secure.middlewares=ipwhitelist"
       - "traefik.http.routers.portainer-secure.tls.certresolver=letsencrypt"
       - "traefik.http.services.portainer-secure.loadbalancer.server.port=9443"
       - "traefik.http.services.portainer-secure.loadbalancer.server.scheme=https"
