@@ -1,0 +1,63 @@
+{
+    "storage": {
+        "rootDirectory": "/tmp/zot",
+        "commit": true,
+        "dedupe": false,
+        "gc": true,
+        "storageDriver": {
+            "name": "s3",
+            "region": "[REGION]",
+            "bucket": "[BUCKET]",
+            "regionendpoint": "[REGION_ENDPOINT]",
+            "secure": true,
+            "skipverify": true,
+            "forcepathstyle": true,
+            "accesskey": "[ACCESS_KEY]",
+            "secretkey": "[SECRET_KEY]"
+        }
+    },
+    "http": {
+        "address": "0.0.0.0",
+        "port": "5000",
+        "externalUrl": "[EXTERNAL_URL]",
+        "accessControl": {
+            "repositories": {
+                "**": {
+                    "defaultPolicy": ["read", "update", "create"]
+                }
+            },
+            "adminPolicy": {
+                "users": ["[ADMIN_USER1]", "[ADMIN_USER2]"],
+                "actions": ["read", "create", "update", "delete"]
+            }
+        },
+        "auth": {
+            "htpasswd": {
+                "path": "/etc/zot/htpasswd"
+            },
+            "openid": {
+                "providers": {
+                    "github": {
+                        "clientid": "[CLIENT_ID]",
+                        "clientsecret": "[CLIENT_SECRET]",
+                        "scopes": ["read:org", "user", "repo"]
+                    }
+                }
+            }
+        }
+    },
+    "log": {
+        "level": "debug"
+    },
+    "extensions": {
+        "search": {
+            "enable": true
+        },
+        "ui": {
+            "enable": true
+        },
+        "mgmt": {
+            "enable": true
+        }
+    }
+}
