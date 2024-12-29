@@ -1,6 +1,6 @@
 services:
   mattermost:
-    image: mattermost/mattermost-enterprise-edition:9.11.0
+    image: mattermost/mattermost-enterprise-edition:10.1
     environment:
       - TZ=${TZ}
       - MM_SQLSETTINGS_DRIVERNAME=postgres
