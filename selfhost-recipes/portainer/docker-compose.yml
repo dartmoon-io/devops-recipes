@@ -3,8 +3,9 @@ services:
     image: portainer/portainer-ee:2.25.1
     container_name: portainer
     volumes:
-      - "/var/docker/portainer/volumes/data:/data"
+      - /var/docker/portainer/volumes/data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/docker:/var/docker
     ports:
       - 8000:8000
       - 9443:9443
