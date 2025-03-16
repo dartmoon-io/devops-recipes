@@ -61,6 +61,11 @@ docker compose up -d
 docker compose up -d
 ```
 
+### Launch the traefik stack
+1. Log into portainer using the url `https://localhost:9443/#!/internal-auth`
+2. Create a new stack and paste the content of the traefik `docker-compose.yml` file
+3. Lauch the stack
+
 ## Usage
 Inside each folder you will find the `docker-compose.yml` file and the `.env` file. To use them you need to feed the `docker-compose.yml` to Portainer and define each environment variable. The `.env` file is just a template for which environment variables must be defined.
 

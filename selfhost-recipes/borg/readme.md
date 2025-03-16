@@ -13,7 +13,7 @@ mkdir -p /var/borg/repository
 borg init --encryption=none /var/borg/repository
 ```
 
-2. Install and configure awscli as per [Amazon documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and s3 bucket
+2. Install and configure awscli as per [Amazon documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html). Be aware that you must install a version prior to 2.22.35
 
 Configure the bucket following your provider. We are using [Scaleway](https://www.scaleway.com/en/docs/storage/object/api-cli/object-storage-aws-cli/).
 
