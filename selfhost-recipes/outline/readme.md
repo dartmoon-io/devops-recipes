@@ -8,12 +8,7 @@ Outline needs a special configuration of the S3 bucket. Inside the `cors.json` y
 
 For scaleway
 
-1. Install and configure awscli and s3 bucket
-```bash
-apt-get install awscli
-apt-get install pip
-pip3 install awscli-plugin-endpoint
-```
+1. Install and configure awscli as per [Amazon documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
 Configure the bucket following your provider. We are using [Scaleway](https://www.scaleway.com/en/docs/storage/object/api-cli/object-storage-aws-cli/).
 

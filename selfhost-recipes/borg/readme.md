@@ -13,18 +13,14 @@ mkdir -p /var/borg/repository
 borg init --encryption=none /var/borg/repository
 ```
 
-2. Install and configure awscli and s3 bucket
-```bash
-apt-get install awscli
-apt-get install pip
-pip3 install awscli-plugin-endpoint
-```
+2. Install and configure awscli as per [Amazon documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and s3 bucket
 
 Configure the bucket following your provider. We are using [Scaleway](https://www.scaleway.com/en/docs/storage/object/api-cli/object-storage-aws-cli/).
 
 eg.
 File `~/.aws/config`
 ```txt
+[default]
 region = fr-par
 output = json
 services = scw-fr-par
