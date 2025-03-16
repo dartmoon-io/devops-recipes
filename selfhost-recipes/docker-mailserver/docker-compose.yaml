@@ -1,6 +1,6 @@
 services:
   mailserver:
-    image: ghcr.io/docker-mailserver/docker-mailserver:12.1
+    image: ghcr.io/docker-mailserver/docker-mailserver:15.0
     env_file:
       - stack.env
     # More information about the mail-server ports:
