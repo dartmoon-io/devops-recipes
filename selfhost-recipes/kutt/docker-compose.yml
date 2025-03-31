@@ -1,0 +1,80 @@
+services:
+  server:
+    image: kutt/kutt:v3.2.3
+    environment:
+      PORT: 3000
+      SITE_NAME: ${SITE_NAME}
+      DEFAULT_DOMAIN: ${DEFAULT_DOMAIN}
+      JWT_SECRET: ${JWT_SECRET}
+      LINK_LENGTH: ${LINK_LENGTH}
+      LINK_CUSTOM_ALPHABET: ${LINK_CUSTOM_ALPHABET}
+      TRUST_PROXY: true
+      DISALLOW_REGISTRATION: true
+      DISALLOW_ANONYMOUS_LINKS: true
+      CUSTOM_DOMAIN_USE_HTTPS: true
+
+      DB_CLIENT: mysql2
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_NAME: kutt
+      DB_USER: kutt
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SSL: false
+      DB_POOL_MIN: 0
+      DB_POOL_MAX: 10
+
+      REDIS_ENABLED: true
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+
+      MAIL_ENABLED: true
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_SECURE: ${MAIL_SECURE}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+    volumes:
+      - /var/docker/kutt/volumes/data:/kutt/custom
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kutt.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.kutt.entrypoints=web"
+      - "traefik.http.routers.kutt.middlewares=https-redirect"
+      - "traefik.http.routers.kutt-secure.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.kutt-secure.entrypoints=websecure"
+      - "traefik.http.routers.kutt-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.kutt-secure.loadbalancer.server.port=3000"
+      - "traefik.http.services.kutt-secure.loadbalancer.server.scheme=http"
+    networks:
+      - kutt
+      - traefik
+    depends_on:
+      - mariadb
+      - redis
+        
+  mariadb:
+    image: mariadb:10
+    environment:
+      MARIADB_DATABASE: kutt
+      MARIADB_USER: kutt
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /var/docker/kutt/volumes/mariadb:/var/lib/mysql
+    networks:
+      - kutt
+    restart: always
+
+  redis:
+    image: redis:alpine
+    networks:
+      - kutt
+    restart: always
+      
+networks:
+  kutt:
+    driver: bridge
+  traefik:
+    external: true
