@@ -1,0 +1,109 @@
+services:
+  app:
+    restart: always
+    image: "solidtime/solidtime:0.8.0"
+    user: "1000:1000"
+    networks:
+      - internal
+      - traefik
+    volumes:
+      - app-storage:/var/www/html/storage
+      - /var/docker/solidtime/volumes/storage/app:/var/www/html/storage/app
+      - /var/docker/solidtime/volumes/storage/logs:/var/www/html/storage/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.solidtime.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.solidtime.entrypoints=web"
+      - "traefik.http.routers.solidtime.middlewares=https-redirect"
+      - "traefik.http.routers.solidtime-secure.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.solidtime-secure.entrypoints=websecure"
+      - "traefik.http.routers.solidtime-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.services.solidtime-secure.loadbalancer.server.port=8000"
+      - "traefik.http.services.solidtime-secure.loadbalancer.server.scheme=http"
+    environment:
+      CONTAINER_MODE: http
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8000/health-check/up || exit 1" ]
+    env_file:
+      - stack.env
+    depends_on:
+      - database
+
+  scheduler:
+    restart: always
+    image: "solidtime/solidtime:0.8.0"
+    user: "1000:1000"
+    networks:
+      - internal
+    volumes:
+      - app-storage:/var/www/html/storage
+      - /var/docker/solidtime/volumes/storage/app:/var/www/html/storage/app
+      - /var/docker/solidtime/volumes/storage/logs:/var/www/html/storage/logs
+    environment:
+      CONTAINER_MODE: scheduler
+    healthcheck:
+      test: [ "CMD-SHELL", "supervisorctl status scheduler:scheduler_00" ]
+    env_file:
+      - stack.env
+    depends_on:
+      - database
+
+  queue:
+    restart: always
+    image: "solidtime/solidtime:0.8.0"
+    user: "1000:1000"
+    networks:
+      - internal
+    volumes:
+      - app-storage:/var/www/html/storage
+      - /var/docker/solidtime/volumes/storage/app:/var/www/html/storage/app
+      - /var/docker/solidtime/volumes/storage/logs:/var/www/html/storage/logs
+    environment:
+      CONTAINER_MODE: worker
+      WORKER_COMMAND: "php /var/www/html/artisan queue:work"
+    healthcheck:
+      test: [ "CMD-SHELL", "supervisorctl status worker:worker_00" ]
+    env_file:
+      - stack.env
+    depends_on:
+      - database
+
+  database:
+    restart: always
+    image: 'postgres:15'
+    environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE}'
+      POSTGRES_USER: '${DB_USERNAME}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - /var/docker/solidtime/volumes/postgres:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test:
+        - CMD
+        - pg_isready
+        - '-q'
+        - '-d'
+        - '${DB_DATABASE}'
+        - '-U'
+        - '${DB_USERNAME}'
+      retries: 3
+      timeout: 5s
+
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    networks:
+      - internal
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:3000/health" ]
+
+networks:
+  internal:
+    driver: bridge
+  traefik:
+    external: true
+
+volumes:
+  app-storage:
