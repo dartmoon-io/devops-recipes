@@ -19,7 +19,6 @@ NOW=$(date +"%Y-%m-%d | %H:%M | ")
 echo "$NOW Starting Backup and Prune" >> $LOGFILE
 
 # CREATES NEW ARCHIVE IN PRESET REPOSITORY
-
 borg create                                     \
     $REPOSITORY::'{now:%s}'                     \
     $BACKUP_THIS                                \
@@ -30,13 +29,15 @@ borg create                                     \
     --exclude-if-present '.nobackup'            \
 
 # DELETES ARCHIVES NOT FITTING KEEP-RULES
-
 borg prune -v --list $REPOSITORY                \
-    --keep-hourly=24                            \
+    --keep-within=2d                            \
     --keep-daily=7                              \
     --keep-weekly=4                             \
     --keep-monthly=6                            \
     --keep-yearly=0                             \
+
+# COMPACT THE REPOSITORY TO SAVE SPACE
+borg compact -v "$REPOSITORY" || true
 
 echo "$NOW Starting to backup repo to S3" >> $LOGFILE
 
