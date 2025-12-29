@@ -1,6 +1,6 @@
 services:
   outline:
-    image: outlinewiki/outline:0.78.0
+    image: outlinewiki/outline:1.1.0
     environment:
       - NODE_ENV=production
       - SECRET_KEY=${SECRET_KEY}
