@@ -1,6 +1,6 @@
 services:
   valutwarden:
-    image: vaultwarden/server:1.33.2
+    image: vaultwarden/server:1.35.0
     environment:
       - SIGNUPS_ALLOWED=false
       - ADMIN_TOKEN=${ADMIN_TOKEN}
