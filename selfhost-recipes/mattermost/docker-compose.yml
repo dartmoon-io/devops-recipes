@@ -1,6 +1,6 @@
 services:
   mattermost:
-    image: mattermost/mattermost-enterprise-edition:10.10
+    image: mattermost/mattermost-enterprise-edition:11.1
     environment:
       - TZ=${TZ}
       - MM_SQLSETTINGS_DRIVERNAME=postgres
@@ -40,7 +40,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres:13-alpine
+    image: postgres:14-alpine
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=${DATABASE_USER}
