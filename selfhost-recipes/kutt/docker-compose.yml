@@ -65,13 +65,13 @@ services:
       - /var/docker/kutt/volumes/mariadb:/var/lib/mysql
     networks:
       - kutt
-    restart: always
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
     networks:
       - kutt
-    restart: always
+    restart: unless-stopped
       
 networks:
   kutt:

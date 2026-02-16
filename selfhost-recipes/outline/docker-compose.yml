@@ -49,7 +49,7 @@ services:
       - "traefik.http.routers.outline-secure.tls.certresolver=letsencrypt"
       - "traefik.http.services.outline-secure.loadbalancer.server.port=3000"
       - "traefik.http.services.outline-secure.loadbalancer.server.scheme=http"
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik
       - outline
@@ -62,7 +62,7 @@ services:
     volumes:
       - ./redis.conf:/redis.conf
     command: ["redis-server", "/redis.conf"]
-    restart: always
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -84,7 +84,7 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    restart: always
+    restart: unless-stopped
     networks:
       - outline
 
