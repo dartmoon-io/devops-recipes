@@ -1,17 +1,18 @@
 # Selfhost Recipes
 
-## Overview
-This directory contains Portainer-friendly recipes to deploy and operate self-hosted services.
+## Important
+Do not run Docker or public services as root. Always create a dedicated user where possible.
 
-## Principles
-- Do not run services as `root` when avoidable.
-- Store persistent data under `/var/docker/<service>/volumes/` for easier backup and restore.
-- Keep all public services behind Traefik.
-- Restrict host firewall rules with UFW and expose only required ports.
+```bash
+sudo adduser ubuntu
+sudo usermod -aG sudo ubuntu
+```
 
 ## Prerequisites
-1. Install Docker Engine on Ubuntu: <https://docs.docker.com/engine/install/ubuntu/>
-2. Install UFW and allow SSH:
+- Install Docker: <https://docs.docker.com/engine/install/ubuntu/>
+- Store persistent data under `/var/docker/<service>/volumes/` to simplify backups.
+- Use named Docker volumes only for data that can be recreated (for example cache).
+- Enable UFW:
 
 ```bash
 sudo apt-get update
@@ -20,7 +21,7 @@ sudo ufw allow OpenSSH
 sudo ufw enable
 ```
 
-3. Put Docker behind UFW by appending the following block to `/etc/ufw/after.rules`:
+- Put Docker behind UFW by appending this block to `/etc/ufw/after.rules`:
 
 ```txt
 # Put Docker behind UFW
@@ -41,47 +42,43 @@ Then reload UFW:
 sudo ufw reload
 ```
 
-## Installation flow
-### 1) Portainer
+## Installation
+### Install Portainer
 1. Copy `selfhost-recipes/portainer/docker-compose.yml` and `.env` to the host.
-2. Fill `.env` (especially `TRAEFIK_HOST`).
-3. Start the stack:
-
-```bash
-docker compose up -d
-```
-
-### 2) Portainer Edge Agent (where stacks run)
-1. Follow the official guide: <https://www.portainer.io/blog/using-the-edge-agent-on-your-local-docker-instance>
-2. Copy `selfhost-recipes/portainer-agent/docker-compose.yml` and `.env` to the target host.
-3. Fill `.env` with the Edge values from Portainer.
-4. Start the stack:
-
-```bash
-docker compose up -d
-```
-
-### 3) Traefik (reverse proxy)
-1. Create the external network once:
+2. Fill `.env` with the domain for this Portainer instance (for example `portainer.yourdomain.io`).
+3. Create the Traefik network (required by multiple stacks):
 
 ```bash
 docker network create traefik
 ```
 
-2. Copy `selfhost-recipes/traefik/docker-compose.yml` and `.env` to the host.
-3. Fill required variables (email, trusted IPs, dashboard host/auth).
-4. Start the stack:
+4. Start Portainer:
 
 ```bash
 docker compose up -d
 ```
 
-## Service deployment pattern
-For each service folder:
-1. Copy `docker-compose.yml` and optional support files to the host.
-2. Fill `.env` variables.
-3. Ensure required host folders exist under `/var/docker/<service>/volumes`.
-4. Deploy via Portainer stack editor or `docker compose up -d`.
+### Install Portainer Agent (where stacks run)
+1. Follow: <https://www.portainer.io/blog/using-the-edge-agent-on-your-local-docker-instance>
+2. Copy `selfhost-recipes/portainer-agent/docker-compose.yml` and `.env` to the target host.
+3. Fill `.env` using values from Portainer Edge setup.
+4. Start the agent:
+
+```bash
+docker compose up -d
+```
+
+### Launch Traefik stack
+1. Open Portainer at `https://localhost:9443/#!/internal-auth`.
+2. Create a new stack and paste `selfhost-recipes/traefik/docker-compose.yml`.
+3. Fill all environment variables from `selfhost-recipes/traefik/.env`.
+4. Deploy the stack.
+
+## Usage
+Each service folder contains `docker-compose.yml` and usually a `.env` template.
+- Use the compose file in Portainer stack deployment.
+- Define all required environment variables.
+- Create required host directories under `/var/docker/<service>/volumes` before deployment.
 
 ## Resources
 - <https://github.com/DoTheEvo/selfhosted-apps-docker/>

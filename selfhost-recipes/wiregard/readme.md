@@ -3,34 +3,40 @@
 ## Installation
 1. Install WireGuard following Pi-hole guidance:
    <https://docs.pi-hole.net/guides/vpn/wireguard/server/>
-2. Install UFW and allow required traffic:
+
+2. Install UFW:
 
 ```bash
 sudo apt install -y ufw
+```
+
+3. Allow WireGuard and SSH through the firewall:
+
+```bash
 sudo ufw allow 47111/udp
 sudo ufw allow OpenSSH
+```
+
+4. Enable the firewall:
+
+```bash
 sudo ufw enable
 ```
 
-3. Use the helper script below to manage clients automatically.
+5. Use `wg-clients.sh` (included in this folder) to create and manage clients automatically.
 
 ## Client management script
-> Save as `wg-clients.sh`, make it executable, and run as root.
+Copy the script to your server and make it executable:
 
 ```bash
-#!/usr/bin/env bash
-# wg-clients.sh
-# Features:
-#   - Add a WireGuard client (auto IP assignment)
-#   - Remove a WireGuard client
-#   - List existing clients with assigned IPs
-#   - Backup wg0.conf before any modification
-#   - Detect IP conflicts by checking wg0.conf AND wg live state
-#   - Provide usage help when run without parameters
-
-set -e
-umask 077
-...
+sudo cp wg-clients.sh /usr/local/sbin/wg-clients.sh
+sudo chmod +x /usr/local/sbin/wg-clients.sh
 ```
 
-> The script body is intentionally shortened in this README. Keep your full version in version control.
+Usage:
+
+```bash
+sudo /usr/local/sbin/wg-clients.sh add <client_name>
+sudo /usr/local/sbin/wg-clients.sh remove <client_name>
+sudo /usr/local/sbin/wg-clients.sh list
+```
