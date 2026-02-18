@@ -59,7 +59,4 @@ networks:
     external: true
 ```
 
-## Compose conventions reminder
-- No `version:`
-- `restart: unless-stopped`
-- service field order: image → env → volumes → ports → labels → depends_on → healthcheck → restart → networks
+See `selfhost-recipes/readme.md` for the global Docker Compose standard.
