@@ -20,7 +20,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       # Mount the acme.json file from traefik to the mailserver container
       # - /var/docker/traefik/volumes/letsencrypt/acme.json:/etc/letsencrypt/acme.json:ro
-    restart: always
+    restart: unless-stopped
     stop_grace_period: 1m
     # Uncomment if using `ENABLE_FAIL2BAN=1`:
     # cap_add:

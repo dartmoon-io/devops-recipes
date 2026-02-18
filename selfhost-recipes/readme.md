@@ -44,6 +44,7 @@ sudo ufw reload
 
 ## Docker Compose standard (mandatory)
 Use this standard for every `docker-compose.yml` in this directory.
+Apply these rules to all recipes in this directory.
 
 ### Global rules
 - Do not use `version:`.
