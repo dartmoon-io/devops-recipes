@@ -14,7 +14,28 @@ docker network create traefik
 - `TRAEFIK_DASHBOARD_AUTH` (htpasswd format)
 
 3. Deploy stack via Portainer.
+
 4. Verify:
 - HTTP redirects to HTTPS
 - certificate issuance works
 - dashboard is reachable only at `https://<TRAEFIK_DASHBOARD_HOST>` with auth
+
+## Standard labels pattern (copy/paste)
+Use this pattern for every web-exposed service:
+
+```yaml
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.<service>.rule=Host(`${TRAEFIK_HOST}`)"
+  - "traefik.http.routers.<service>.entrypoints=web"
+  - "traefik.http.routers.<service>.middlewares=https-redirect"
+  - "traefik.http.routers.<service>-secure.rule=Host(`${TRAEFIK_HOST}`)"
+  - "traefik.http.routers.<service>-secure.entrypoints=websecure"
+  - "traefik.http.routers.<service>-secure.tls.certresolver=letsencrypt"
+  - "traefik.http.services.<service>-secure.loadbalancer.server.port=<internal_port>"
+```
+
+## Compose conventions reminder
+- No `version:`
+- `restart: unless-stopped`
+- service field order: image → env → volumes → ports → labels → depends_on → healthcheck → restart → networks

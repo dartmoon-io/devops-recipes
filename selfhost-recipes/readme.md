@@ -42,6 +42,42 @@ Then reload UFW:
 sudo ufw reload
 ```
 
+## Docker Compose standard (mandatory)
+Use this standard for every `docker-compose.yml` in this directory.
+
+### Global rules
+- Do not use `version:`.
+- Keep section order: `services` → `networks` → `volumes`.
+- Use `restart: unless-stopped` by default.
+- Keep names clean and consistent (service name must match product name).
+
+### Service field order
+Inside each service, keep this order when applicable:
+1. `image`
+2. `container_name` (only when needed)
+3. `env_file` / `environment`
+4. `volumes`
+5. `ports`
+6. `labels`
+7. `depends_on`
+8. `healthcheck`
+9. `restart`
+10. `networks`
+
+### Traefik exposure pattern
+For web-exposed services:
+- Always set `traefik.enable=true`.
+- Always define both routers:
+  - `<service>` on `web` + `https-redirect`
+  - `<service>-secure` on `websecure` + TLS certresolver
+- Always define backend port:
+  - `traefik.http.services.<service>-secure.loadbalancer.server.port=<internal_port>`
+- Attach service to external `traefik` network.
+
+Use the Traefik templates in:
+- `selfhost-recipes/traefik/readme.md`
+- `selfhost-recipes/traefik/example.md`
+
 ## Installation
 ### Install Portainer
 1. Copy `selfhost-recipes/portainer/docker-compose.yml` and `.env` to the host.
