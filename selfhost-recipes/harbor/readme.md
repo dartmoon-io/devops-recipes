@@ -1,18 +1,25 @@
-# Harbor (Docker registry)
+# Harbor (Container Registry)
 
-# Installation
-1. Download the harbor installation script as described here `https://goharbor.io/docs/2.12.0/install-config/download-installer/` inside `/var/docker/harbor/harbor` folder
-2. Create a folder named `data` and `log` inside `/var/docker/harbor` folder
-3. Rename the file `harbor.yml.tmpl` to `harbor.yml`
-4. Edit the `harbor.yml` changing:
+## Installation
+1. Download the Harbor installer into `/var/docker/harbor/harbor`:
+   <https://goharbor.io/docs/2.12.0/install-config/download-installer/>
+2. Create required folders:
 
-- Change the `hostname` to your domain name
-- Comment the `https` section: we are putting the registry behind traefik as a reverse proxy
-- Uncommend and compile `external_url` with the same domain name as hostname
-- Generare a password for the database and put it in `database.password`
-- Change the `data_volume` to `/var/docker/harbor/data` 
-- Change the `log.local.location` to `/var/docker/harbor/log` 
-- Add the storage settings:
+```bash
+mkdir -p /var/docker/harbor/data /var/docker/harbor/log
+```
+
+3. Rename `harbor.yml.tmpl` to `harbor.yml`.
+4. Edit `harbor.yml`:
+- Set `hostname` to your domain.
+- Comment the `https` section (TLS is handled by Traefik).
+- Set `external_url` with the same domain.
+- Set `database.password`.
+- Set `data_volume` to `/var/docker/harbor/data`.
+- Set `log.local.location` to `/var/docker/harbor/log`.
+- Set `log.level` to `warning`.
+- Add storage settings if using S3:
+
 ```yaml
 storage_service:
   type: s3
@@ -27,18 +34,22 @@ storage_service:
     rootdirectory: /
     forcepathstyle: true
 ```
-- Set the log level to `warning` inside `log.level`
 
-5. Lauch the installation script with `./install.sh` and follow the instructions, but do not launch harbor
-6. Edit the `docker-compose.yml` 
+5. Run install script but do not start Harbor yet:
 
-- Sustitute the `./common` with `/var/docker/harbor/harbor/common`
-- Edit the `proxy` service:
+```bash
+./install.sh
+```
+
+6. Edit generated `docker-compose.yml`:
+- Replace `./common` with `/var/docker/harbor/harbor/common`.
+- Update `proxy` service and add Traefik labels/network:
+
 ```yaml
 proxy:
   image: goharbor/nginx-photon:v2.12.2
   container_name: nginx
-  restart: always
+  restart: unless-stopped
   cap_drop:
     - ALL
   cap_add:
@@ -69,13 +80,10 @@ proxy:
     - core
     - portal
     - log
-  logging:
-    driver: "syslog"
-    options:
-      syslog-address: "tcp://localhost:1514"
-      tag: "proxy"
 ```
-- Add the `traefik` network
+
+- Ensure networks section includes Traefik:
+
 ```yaml
 networks:
   harbor:
@@ -84,4 +92,8 @@ networks:
     external: true
 ```
 
-7. Launch the harbor with `sudo docker compose up -d`
+7. Start Harbor:
+
+```bash
+docker compose up -d
+```

@@ -1,6 +1,6 @@
 services:
   app:
-    restart: always
+    restart: unless-stopped
     image: "solidtime/solidtime:0.8.0"
     user: "1000:1000"
     networks:
@@ -30,7 +30,7 @@ services:
       - database
 
   scheduler:
-    restart: always
+    restart: unless-stopped
     image: "solidtime/solidtime:0.8.0"
     user: "1000:1000"
     networks:
@@ -49,7 +49,7 @@ services:
       - database
 
   queue:
-    restart: always
+    restart: unless-stopped
     image: "solidtime/solidtime:0.8.0"
     user: "1000:1000"
     networks:
@@ -69,7 +69,7 @@ services:
       - database
 
   database:
-    restart: always
+    restart: unless-stopped
     image: 'postgres:15'
     environment:
       PGPASSWORD: '${DB_PASSWORD:-secret}'

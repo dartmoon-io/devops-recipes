@@ -13,7 +13,7 @@ services:
       - "traefik.http.routers.uptime-kuma-secure.tls.certresolver=letsencrypt"
       - "traefik.http.services.uptime-kuma-secure.loadbalancer.server.port=3001"
       - "traefik.http.services.uptime-kuma-secure.loadbalancer.server.scheme=http"
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik
 

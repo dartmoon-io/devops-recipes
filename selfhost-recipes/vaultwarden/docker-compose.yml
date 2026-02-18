@@ -1,5 +1,5 @@
 services:
-  valutwarden:
+  vaultwarden:
     image: vaultwarden/server:1.35.0
     environment:
       - SIGNUPS_ALLOWED=false
@@ -24,7 +24,7 @@ services:
       - "traefik.http.routers.vaultwarden-secure.tls.certresolver=letsencrypt"
       - "traefik.http.services.vaultwarden-secure.loadbalancer.server.port=80"
       - "traefik.http.services.vaultwarden-secure.loadbalancer.server.scheme=http"
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik
 
